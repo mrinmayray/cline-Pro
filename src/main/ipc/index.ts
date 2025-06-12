@@ -71,18 +71,21 @@ export function registerIpcHandlers(mainWindow: BrowserWindow) {
   
   // Task operations
   ipcMain.handle('tasks:get', () => {
-    return store.get('tasks') || [];
+    const storedTasks = store.get('tasks');
+    return Array.isArray(storedTasks) ? storedTasks : [];
   });
   
   ipcMain.handle('tasks:create', (_event, task) => {
-    const tasks = store.get('tasks') || [];
+    const storedTasks = store.get('tasks');
+    const tasks = Array.isArray(storedTasks) ? storedTasks : [];
     const newTask = { ...task, id: Date.now().toString() };
     store.set('tasks', [...tasks, newTask]);
     return newTask;
   });
   
   ipcMain.handle('tasks:update', (_event, id, updatedTask) => {
-    const tasks = store.get('tasks') || [];
+    const storedTasks = store.get('tasks');
+    const tasks = Array.isArray(storedTasks) ? storedTasks : [];
     const updatedTasks = tasks.map((task: any) => 
       task.id === id ? { ...task, ...updatedTask } : task
     );
@@ -91,7 +94,8 @@ export function registerIpcHandlers(mainWindow: BrowserWindow) {
   });
   
   ipcMain.handle('tasks:delete', (_event, id) => {
-    const tasks = store.get('tasks') || [];
+    const storedTasks = store.get('tasks');
+    const tasks = Array.isArray(storedTasks) ? storedTasks : [];
     const filteredTasks = tasks.filter((task: any) => task.id !== id);
     store.set('tasks', filteredTasks);
     return true;

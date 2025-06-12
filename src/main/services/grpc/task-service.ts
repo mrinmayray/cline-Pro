@@ -8,7 +8,8 @@ export class TaskServiceImpl {
     server.addService({
       getTasks: (call: any, callback: any) => {
         try {
-          const tasks = store.get('tasks') || [];
+          const storedTasks = store.get('tasks');
+          const tasks = Array.isArray(storedTasks) ? storedTasks : [];
           callback(null, { tasks });
         } catch (error: any) {
           callback({
@@ -21,7 +22,8 @@ export class TaskServiceImpl {
       createTask: (call: any, callback: any) => {
         try {
           const { task } = call.request;
-          const tasks = store.get('tasks') || [];
+          const storedTasks = store.get('tasks');
+          const tasks = Array.isArray(storedTasks) ? storedTasks : [];
           const newTask = { ...task, id: Date.now().toString() };
           
           store.set('tasks', [...tasks, newTask]);
@@ -37,7 +39,8 @@ export class TaskServiceImpl {
       updateTask: (call: any, callback: any) => {
         try {
           const { id, task } = call.request;
-          const tasks = store.get('tasks') || [];
+          const storedTasks = store.get('tasks');
+          const tasks = Array.isArray(storedTasks) ? storedTasks : [];
           
           const updatedTasks = tasks.map((t: any) => 
             t.id === id ? { ...t, ...task } : t
@@ -56,7 +59,8 @@ export class TaskServiceImpl {
       deleteTask: (call: any, callback: any) => {
         try {
           const { id } = call.request;
-          const tasks = store.get('tasks') || [];
+          const storedTasks = store.get('tasks');
+          const tasks = Array.isArray(storedTasks) ? storedTasks : [];
           
           const filteredTasks = tasks.filter((t: any) => t.id !== id);
           store.set('tasks', filteredTasks);
